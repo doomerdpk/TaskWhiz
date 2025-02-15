@@ -5,9 +5,7 @@ const path = require("path");
 const jwt = require("jsonwebtoken");
 
 const envPath = path.join(__dirname, "../../.env");
-require("dotenv").config({
-  path: envPath,
-});
+require("dotenv").config({ path: envPath });
 
 const usersPath = path.join(__dirname, "../../data/users.json");
 const router = express.Router();
@@ -18,18 +16,16 @@ router.post("/signup", async (req, res) => {
     const password = req.body.password;
 
     if (!username || !password) {
-      res.status(400).json({
+      return res.status(400).json({
         error: "Please provide your username and password to signup!",
       });
-      return;
     }
 
     if (!userNameCheck(username) || !passwordCheck(password)) {
-      res.status(400).json({
+      return res.status(400).json({
         error:
-          "Username must be of 6 to 10 characters and Password must contain a capital letter, a small letter and a number!",
+          "Username must be of 6 to 15 characters containing a capital letter, a small letter and a number and Password must be of 8 to 25 characters containing a capital letter, a small letter, a number and a special character!",
       });
-      return;
     }
 
     const data = await readFile(usersPath);
@@ -64,7 +60,7 @@ router.post("/signup", async (req, res) => {
   } catch (err) {
     console.error("Error Occured:", err);
     res.status(500).json({
-      error: "Unexpected error occured...s",
+      error: "Unexpected Server Error!",
     });
   }
 });
@@ -75,10 +71,9 @@ router.post("/signin", async (req, res) => {
     const password = req.body.password;
 
     if (!username || !password) {
-      res.status(400).json({
+      return res.status(400).json({
         error: "Please provide your username and password to signin!",
       });
-      return;
     }
 
     const data = await readFile(usersPath);
@@ -88,25 +83,36 @@ router.post("/signin", async (req, res) => {
       (user) => user.username === username && user.password === password
     );
 
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET is missing from environment variables!");
+      return res
+        .status(500)
+        .json({ error: "Server misconfiguration. Contact support!" });
+    }
+
     if (userExists) {
       const token = jwt.sign(
         {
           username,
         },
-        process.env.JWT_SECRET
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1h",
+        }
       );
       res.status(200).json({
-        message: token,
+        message: "You have Successfully signed-in!",
+        token,
       });
     } else {
-      res.status(400).json({
-        error: "Invalid Credientials!",
+      res.status(401).json({
+        error: "Invalid username or password.",
       });
     }
   } catch (err) {
     console.error("Error Ocuured:", err);
     res.status(500).json({
-      error: "Unexpected error occured...",
+      error: "Unexpected Server Error!",
     });
   }
 });

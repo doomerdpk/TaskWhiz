@@ -28,3 +28,7 @@ Todos related Endpoints:
 ## Database related requirements:
 
 - Maintain a separate file for storing todos for a specific user.
+
+##Code Review:
+
+- Backend: https://chatgpt.com/share/67b0b723-69f0-8000-8c28-43147520e83e

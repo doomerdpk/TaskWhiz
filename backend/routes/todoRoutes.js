@@ -2,27 +2,31 @@ const express = require("express");
 const { readFile, writeFile } = require("../utils/fileUtils");
 const path = require("path");
 const auth = require("../middlewares/Auth");
-const { timeEnd } = require("console");
 
 const router = express.Router();
 
 router.use(auth);
 
+const getUserFilePath = (username) =>
+  path.resolve(__dirname, `../../data/usersData/${username}.json`);
+
 router.get("/view-todos", async (req, res) => {
   try {
-    const userPath = path.join(
-      __dirname,
-      "../../data/usersData/" + req.username + ".json"
-    );
+    if (!req.username) {
+      return res
+        .status(401)
+        .json({ error: "Unauthorized access. Please log in." });
+    }
+
+    const userPath = getUserFilePath(req.username);
 
     const data = await readFile(userPath);
     const todos = JSON.parse(data);
 
     if (todos.length === 0) {
-      res.status(200).json({
+      return res.status(200).json({
         message: "Empty list!",
       });
-      return;
     }
 
     res.status(200).json({
@@ -31,35 +35,36 @@ router.get("/view-todos", async (req, res) => {
   } catch (err) {
     console.error("Error Occured!", err);
     res.status(500).json({
-      error: "Unexpected error occured....",
+      error: "Error while Fetching Todos!",
     });
   }
 });
 
 router.post("/create-todo", async (req, res) => {
   try {
+    if (!req.username) {
+      return res
+        .status(401)
+        .json({ error: "Unauthorized access. Please log in." });
+    }
+
     const title = req.body.title;
     const id = req.body.id;
 
-    if (!req.body.title || !req.body.id) {
-      res.status(400).json({
+    if (!title || !title.trim() || !id) {
+      return res.status(400).json({
         error:
           "Please provide a valid title and a valid id to create the todo!",
       });
-      return;
     }
 
     if (isNaN(parseInt(id))) {
-      res.status(400).json({
+      return res.status(400).json({
         error: "Invalid id!...id must be a number",
       });
-      return;
     }
 
-    const userPath = path.join(
-      __dirname,
-      "../../data/usersData/" + req.username + ".json"
-    );
+    const userPath = getUserFilePath(req.username);
 
     const data = await readFile(userPath);
     const todos = JSON.parse(data);
@@ -85,30 +90,33 @@ router.post("/create-todo", async (req, res) => {
   } catch (err) {
     console.error("Error occured:", err);
     res.status(500).json({
-      error: "Unexpected Error Occured..",
+      error: "Error while creating todo!",
     });
   }
 });
 
 router.put("/update-todo/:id", async (req, res) => {
   try {
-    const title = req.body.title;
-
-    if (!title) {
-      res.status(400).json({
-        error: "Please provide a valid title to update the todo!",
-      });
-      return;
+    if (!req.username) {
+      return res
+        .status(401)
+        .json({ error: "Unauthorized access. Please log in." });
     }
 
-    const userPath = path.join(
-      __dirname,
-      "../../data/usersData/" + req.username + ".json"
-    );
+    const title = req.body.title;
+    const todoId = parseInt(req.params.id);
+
+    if (!title || !title.trim()) {
+      return res.status(400).json({
+        error: "Please provide a valid title update the todo!",
+      });
+    }
+
+    const userPath = getUserFilePath(req.username);
 
     const data = await readFile(userPath);
     const todos = JSON.parse(data);
-    const todoId = parseInt(req.params.id);
+
     const todoIndex = todos.findIndex((todo) => todo.id === todoId);
 
     if (todoIndex >= 0) {
@@ -119,36 +127,39 @@ router.put("/update-todo/:id", async (req, res) => {
         message: `Successfully updated the todo with id ${todoId}`,
       });
     } else {
-      res.status(400).json({
+      res.status(404).json({
         error: `Todo with id ${todoId} is not present in the list!`,
       });
     }
   } catch (err) {
     console.error("Error Occured!", err);
     res.status(500).json({
-      error: "Unexpected Error Occured..",
+      error: "Error while updating todo!",
     });
   }
 });
 
 router.delete("/delete-todo/:id", async (req, res) => {
   try {
-    const userPath = path.join(
-      __dirname,
-      "../../data/usersData/" + req.username + ".json"
-    );
+    if (!req.username) {
+      return res
+        .status(401)
+        .json({ error: "Unauthorized access. Please log in." });
+    }
+
+    const todoId = parseInt(req.params.id);
+
+    const userPath = getUserFilePath(req.username);
 
     const data = await readFile(userPath);
     const todos = JSON.parse(data);
-    const todoId = parseInt(req.params.id);
 
     const todoIndex = todos.findIndex((todo) => todo.id === todoId);
 
     if (todoIndex < 0) {
-      res.status(400).json({
+      return res.status(404).json({
         error: `Todo with id ${todoId} does not exist in the list!`,
       });
-      return;
     } else {
       todos.splice(todoIndex, 1);
       const todosData = JSON.stringify(todos, null, 2);
@@ -160,7 +171,7 @@ router.delete("/delete-todo/:id", async (req, res) => {
   } catch (err) {
     console.error("Error Occured:", err);
     res.status(500).json({
-      error: "Unexpected Error Occured..",
+      error: "Error while deleting todo!",
     });
   }
 });
