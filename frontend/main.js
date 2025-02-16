@@ -6,15 +6,68 @@ const signinButton = document.getElementById("signin");
 const navbarButtons = document.getElementById("navbar-buttons");
 const todosSection = document.getElementById("todos-section");
 
+document.addEventListener("DOMContentLoaded", handleRoute);
+window.addEventListener("hashchange", handleRoute);
+
+async function handleRoute() {
+  const routes = ["home", "signup", "signin", "todos"];
+  let page = location.hash.replace("#", "") || "home";
+
+  if (!routes.includes(page)) page = "home";
+
+  document.querySelectorAll("section").forEach((section) => {
+    section.classList.add("hidden");
+  });
+
+  const targetSection = document.getElementById(`${page}-section`);
+  if (targetSection) {
+    targetSection.classList.remove("hidden");
+  } else {
+    console.error(`Section with id "${page}-section" not found.`);
+  }
+
+  if (page === "todos") {
+    try {
+      const response = await axios.get("http://localhost:3000/api/v1/todo/me", {
+        headers: {
+          Authorization: localStorage.getItem(token),
+        },
+      });
+      console.log("A");
+      signupButton.style.display = "none";
+      signinButton.style.display = "none";
+      console.log("B");
+      const welcomeMessage = document.createElement("h3");
+      welcomeMessage.innerHTML = "Welcome " + response.data.message;
+      const logoutBtn = document.createElement("button");
+      logoutBtn.innerHTML = "logOut";
+      logoutBtn.setAttribute("onclick", "logOut()");
+      document
+        .getElementById("navbar-buttons")
+        .append(welcomeMessage, logoutBtn);
+      console.log("C");
+      navigateTo("todos");
+      todosSection.style.display = "flex";
+      getTodos();
+    } catch (error) {
+      if (error.response && error.response.data.error) {
+        alert(error.response.data.error);
+      } else {
+        alert("An unexpected error occurred. Please try again.");
+      }
+    }
+  }
+}
+
+function navigateTo(page) {
+  location.hash = page;
+}
+
 function signupPage() {
-  heroSection.style.display = "none";
   signupSection.style.display = "flex";
-  signinSection.style.display = "none";
 }
 
 function signinPage() {
-  heroSection.style.display = "none";
-  signupSection.style.display = "none";
   signinSection.style.display = "flex";
 }
 
@@ -52,22 +105,18 @@ async function signin() {
     );
     localStorage.setItem("token", response.data.token);
 
-    heroSection.style.display = "none";
-    signupSection.style.display = "none";
-    signinSection.style.display = "none";
     signupButton.style.display = "none";
     signinButton.style.display = "none";
 
     const welcomeMessage = document.createElement("h3");
     welcomeMessage.innerHTML = "Welcome " + response.data.username;
-
     const logoutBtn = document.createElement("button");
     logoutBtn.innerHTML = "logOut";
     logoutBtn.setAttribute("onclick", "logOut()");
-
     document.getElementById("navbar-buttons").append(welcomeMessage, logoutBtn);
 
-    document.getElementById("todos-section").style.display = "flex";
+    navigateTo("todos");
+    todosSection.style.display = "flex";
     getTodos();
   } catch (error) {
     if (error.response && error.response.data.error) {
@@ -82,14 +131,11 @@ function logOut() {
   localStorage.removeItem("token");
 
   navbarButtons.innerHTML = `
-    <button id="signup" onclick="signupPage()">Signup</button>
-    <button id="signin" onclick="signinPage()">Login</button>
+    <button type="button" onclick="navigateTo('signup')">Signup</button>
+    <button type="button" onclick="navigateTo('signin')">Login</button>
   `;
 
-  todosSection.style.display = "none";
-  heroSection.style.display = "block";
-
-  window.location.href = "index.html";
+  navigateTo("home");
 }
 
 async function getTodos() {

@@ -30,6 +30,10 @@ input {
   padding: 0.5rem;
 }
 
+.hidden {
+  display: none !important;
+}
+
 /* Navbar Section */
 #navbar {
   display: flex;
@@ -42,6 +46,7 @@ input {
   align-items: center;
   padding: 3vh;
   gap: 1vw;
+  cursor: pointer;
 }
 
 #navbar-logo img {
@@ -52,7 +57,7 @@ input {
 }
 
 /* Hero Section */
-#hero-section {
+#home-section {
   margin-top: 20vh;
   text-align: center;
   font-size: x-large;
@@ -61,31 +66,31 @@ input {
 
 /* Signup Section */
 #signup-section {
+  display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2vh;
   margin-top: 20vh;
   padding: 2vh 2vw;
-  display: none;
 }
 
 /* Signin Section */
 #signin-section {
+  display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2vh;
   margin-top: 20vh;
   padding: 2vh 2vw;
-  display: none;
 }
 
 /* Todos Section */
 #todos-section {
+  display: flex;
   margin-top: 20vh;
   flex-direction: column;
   align-items: center;
   gap: 4vh;
-  display: none;
 }
 
 #todos-container {

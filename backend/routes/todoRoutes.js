@@ -10,6 +10,18 @@ router.use(auth);
 const getUserFilePath = (username) =>
   path.resolve(__dirname, `../../data/usersData/${username}.json`);
 
+router.get("/me", (req, res) => {
+  if (!req.user) {
+    return res
+      .status(401)
+      .json({ error: "Unauthorized access. Please log in." });
+  }
+
+  res.status(200).json({
+    username: req.user.username,
+  });
+});
+
 router.get("/view-todos", async (req, res) => {
   try {
     if (!req.username) {

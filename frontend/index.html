@@ -7,7 +7,6 @@
       name="description"
       content="TaskWhiz - A simple and effective task management tool."
     />
-
     <title>TaskWhiz</title>
     <link rel="icon" type="image/x-icon" href="./assets/logo.webp" />
     <link rel="stylesheet" href="styles.css" />
@@ -16,59 +15,60 @@
   <body>
     <!-- Navbar Section -->
     <div id="navbar">
-      <div id="navbar-logo">
+      <div id="navbar-logo" onclick="navigateTo('home')">
         <img src="./assets/logo.webp" alt="TaskWhiz Logo" />
         <h1>TaskWhiz</h1>
       </div>
 
       <div id="navbar-buttons">
-        <button type="button" id="signup" onclick="signupPage()">Signup</button>
-        <button type="button" id="signin" onclick="signinPage()">Login</button>
+        <button id="signup" type="button" onclick="navigateTo('signup')">
+          Signup
+        </button>
+        <button id="signin" type="button" onclick="navigateTo('signin')">
+          Login
+        </button>
       </div>
     </div>
 
     <main>
       <!-- Hero Section -->
-      <section id="hero-section">
+      <section id="home-section">
         <h1>TaskWhiz, Get it Done!</h1>
         <p>One Stop solution to make everyday count.</p>
+        <button type="button" onclick="navigateTo('signup')">
+          Get Started
+        </button>
       </section>
 
-      <!-- Signup Section -->
-      <section id="signup-section">
+      <!-- Signup Section  -->
+      <section id="signup-section" class="hidden">
         <h1>Welcome to TaskWhiz</h1>
         <p>Create an account to start listing todos!</p>
-
         <label for="signup-username">Username</label>
         <input id="signup-username" type="text" />
-
         <label for="signup-password">Password</label>
         <input id="signup-password" type="password" autocomplete="off" />
-
         <button type="button" onclick="signup()">Signup</button>
       </section>
 
-      <!-- Signin Section -->
-      <section id="signin-section">
+      <!-- Signin Section  -->
+      <section id="signin-section" class="hidden">
         <h1>Welcome to TaskWhiz</h1>
         <p>Login to access your todos!</p>
-
         <label for="signin-username">Username</label>
         <input id="signin-username" type="text" />
-
         <label for="signin-password">Password</label>
         <input id="signin-password" type="password" autocomplete="off" />
-
-        <button type="button" onclick="signin()">login</button>
+        <button type="button" onclick="signin()">Login</button>
       </section>
 
-      <!-- Todos Section -->
-      <section id="todos-section">
+      <!-- Todos Section  -->
+      <section id="todos-section" class="hidden">
         <div id="todos-container"></div>
         <div id="create-todo">
-          <label for="title-create">title</label>
+          <label for="title-create">Title</label>
           <input id="title-create" type="text" />
-          <label for="id-create">id</label>
+          <label for="id-create">ID</label>
           <input id="id-create" type="number" />
           <button type="button" onclick="createTodo()">Create Todo</button>
         </div>
