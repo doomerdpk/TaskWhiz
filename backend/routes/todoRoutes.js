@@ -58,9 +58,9 @@ router.post("/create-todo", async (req, res) => {
       });
     }
 
-    if (isNaN(parseInt(id))) {
+    if (isNaN(parseInt(id)) || id <= 0) {
       return res.status(400).json({
-        error: "Invalid id!...id must be a number",
+        error: "Invalid id!...id must be a positive number",
       });
     }
 
@@ -104,7 +104,6 @@ router.put("/update-todo/:id", async (req, res) => {
     }
 
     const title = req.body.title;
-    const todoId = parseInt(req.params.id);
 
     if (!title || !title.trim()) {
       return res.status(400).json({
@@ -117,18 +116,18 @@ router.put("/update-todo/:id", async (req, res) => {
     const data = await readFile(userPath);
     const todos = JSON.parse(data);
 
-    const todoIndex = todos.findIndex((todo) => todo.id === todoId);
+    const todoIndex = todos.findIndex((todo) => todo.id === req.params.id);
 
     if (todoIndex >= 0) {
       todos[todoIndex].title = title;
       const todosData = JSON.stringify(todos, null, 2);
       await writeFile(userPath, todosData);
       res.status(200).json({
-        message: `Successfully updated the todo with id ${todoId}`,
+        message: `Successfully updated the todo !`,
       });
     } else {
       res.status(404).json({
-        error: `Todo with id ${todoId} is not present in the list!`,
+        error: `Todo with id ${req.params.id} is not present in the list!`,
       });
     }
   } catch (err) {
@@ -147,15 +146,11 @@ router.delete("/delete-todo/:id", async (req, res) => {
         .json({ error: "Unauthorized access. Please log in." });
     }
 
-    const todoId = parseInt(req.params.id);
-
     const userPath = getUserFilePath(req.username);
 
     const data = await readFile(userPath);
     const todos = JSON.parse(data);
-
-    const todoIndex = todos.findIndex((todo) => todo.id === todoId);
-
+    const todoIndex = todos.findIndex((todo) => todo.id === req.params.id);
     if (todoIndex < 0) {
       return res.status(404).json({
         error: `Todo with id ${todoId} does not exist in the list!`,
@@ -165,7 +160,7 @@ router.delete("/delete-todo/:id", async (req, res) => {
       const todosData = JSON.stringify(todos, null, 2);
       await writeFile(userPath, todosData);
       res.status(200).json({
-        message: `Todo with id ${todoId} deleted successfully!`,
+        message: `Todo deleted successfully!`,
       });
     }
   } catch (err) {

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TodoWhiz</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="https://imgs.search.brave.com/tGDLZZrVz4Sx7O_FnAYQwy1p7iErg7bMG6xv_vFK0TI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pY29u/cy52ZXJ5aWNvbi5j/b20vcG5nL28vYnVz/aW5lc3MvdnNjb2Rl/LXByb2dyYW0taXRl/bS1pY29uL3RvZG8t/Mi5wbmc"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <!-- Navbar Section -->
+    <div id="navbar">
+      <div id="navbar-logo">
+        <img
+          src="https://imgs.search.brave.com/tGDLZZrVz4Sx7O_FnAYQwy1p7iErg7bMG6xv_vFK0TI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pY29u/cy52ZXJ5aWNvbi5j/b20vcG5nL28vYnVz/aW5lc3MvdnNjb2Rl/LXByb2dyYW0taXRl/bS1pY29uL3RvZG8t/Mi5wbmc"
+          alt="logo"
+        />
+        <h1>TaskWhiz</h1>
+      </div>
+
+      <div id="navbar-buttons">
+        <button id="signup" onclick="signupPage()">Signup</button>
+        <button id="signin" onclick="signinPage()">Login</button>
+      </div>
+    </div>
+
+    <!-- Hero Section -->
+    <div id="hero-section">
+      <h1>TaskWhiz, Get it Done!</h1>
+      <p>One Stop solution to make everyday count.</p>
+    </div>
+
+    <!-- Signup Section -->
+    <div id="signup-section">
+      <h1>Welcome to TaskWhiz</h1>
+      <p>Create an account to start listing todos!</p>
+
+      <label for="username">Username</label>
+      <input id="signup-username" type="text" />
+
+      <label for="password">Password</label>
+      <input id="signup-password" type="password" />
+
+      <button onclick="signup()">Signup</button>
+    </div>
+
+    <!-- Signin Section -->
+    <div id="signin-section">
+      <h1>Welcome to TaskWhiz</h1>
+      <p>Login to access your todos!</p>
+
+      <label for="username">Username</label>
+      <input id="signin-username" type="text" />
+
+      <label for="password">Password</label>
+      <input id="signin-password" type="password" />
+
+      <button onclick="signin()">Signin</button>
+    </div>
+
+    <!-- Todos Section -->
+    <div id="todos-section">
+      <div id="todos-container"></div>
+      <div id="create-todo">
+        <label for="title">title</label>
+        <input id="title-create" type="text" />
+        <label for="id">id</label>
+        <input id="id-create" type="number" />
+        <button onclick="createTodo()">Create Todo</button>
+      </div>
+    </div>
+
+    <script src="main.js"></script>
+  </body>
+</html>

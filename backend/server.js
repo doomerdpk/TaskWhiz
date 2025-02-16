@@ -6,6 +6,7 @@ const {
   createFileIfNotExists,
   createFolderIfNotExists,
 } = require("./utils/fileUtils");
+const cors = require("cors");
 
 const dataPath = path.resolve(__dirname, "../data");
 const usersPath = path.join(dataPath, "users.json");
@@ -25,6 +26,8 @@ const connectDB = async () => {
 const app = express();
 
 app.use(express.json());
+
+app.use(cors());
 
 try {
   const userRoutes = require("./routes/userRoutes");

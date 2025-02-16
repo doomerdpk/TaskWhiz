@@ -49,7 +49,7 @@ router.post("/signup", async (req, res) => {
 
       await writeFile(userPath, "[]");
       res.status(201).json({
-        message: "You have successfully signed up!",
+        message: "You have successfully signed up!..Login to access your todos",
       });
     } else {
       res.status(409).json({
@@ -79,6 +79,14 @@ router.post("/signin", async (req, res) => {
     const data = await readFile(usersPath);
     const users = JSON.parse(data);
 
+    const user = users.some((user) => user.username === username);
+
+    if (!user) {
+      return res.status(400).json({
+        error: "User doesn't exists..Please sign up!",
+      });
+    }
+
     const userExists = users.some(
       (user) => user.username === username && user.password === password
     );
@@ -102,6 +110,7 @@ router.post("/signin", async (req, res) => {
       );
       res.status(200).json({
         message: "You have Successfully signed-in!",
+        username,
         token,
       });
     } else {
