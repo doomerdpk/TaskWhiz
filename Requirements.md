@@ -32,3 +32,4 @@ Todos related Endpoints:
 ##Code Review:
 
 - Backend: https://chatgpt.com/share/67b0b723-69f0-8000-8c28-43147520e83e
+- Frontend: https://chatgpt.com/share/67b1df7a-7304-8000-a44c-81760e35a59f
