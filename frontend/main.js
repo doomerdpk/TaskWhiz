@@ -1,13 +1,21 @@
+const heroSection = document.getElementById("hero-section");
+const signupSection = document.getElementById("signup-section");
+const signinSection = document.getElementById("signin-section");
+const signupButton = document.getElementById("signup");
+const signinButton = document.getElementById("signin");
+const navbarButtons = document.getElementById("navbar-buttons");
+const todosSection = document.getElementById("todos-section");
+
 function signupPage() {
-  document.getElementById("hero-section").style.display = "none";
-  document.getElementById("signup-section").style.display = "flex";
-  document.getElementById("signin-section").style.display = "none";
+  heroSection.style.display = "none";
+  signupSection.style.display = "flex";
+  signinSection.style.display = "none";
 }
 
 function signinPage() {
-  document.getElementById("hero-section").style.display = "none";
-  document.getElementById("signup-section").style.display = "none";
-  document.getElementById("signin-section").style.display = "flex";
+  heroSection.style.display = "none";
+  signupSection.style.display = "none";
+  signinSection.style.display = "flex";
 }
 
 async function signup() {
@@ -44,11 +52,11 @@ async function signin() {
     );
     localStorage.setItem("token", response.data.token);
 
-    document.getElementById("hero-section").style.display = "none";
-    document.getElementById("signup-section").style.display = "none";
-    document.getElementById("signin-section").style.display = "none";
-    document.getElementById("signup").style.display = "none";
-    document.getElementById("signin").style.display = "none";
+    heroSection.style.display = "none";
+    signupSection.style.display = "none";
+    signinSection.style.display = "none";
+    signupButton.style.display = "none";
+    signinButton.style.display = "none";
 
     const welcomeMessage = document.createElement("h3");
     welcomeMessage.innerHTML = "Welcome " + response.data.username;
@@ -72,6 +80,15 @@ async function signin() {
 
 function logOut() {
   localStorage.removeItem("token");
+
+  navbarButtons.innerHTML = `
+    <button id="signup" onclick="signupPage()">Signup</button>
+    <button id="signin" onclick="signinPage()">Login</button>
+  `;
+
+  todosSection.style.display = "none";
+  heroSection.style.display = "block";
+
   window.location.href = "index.html";
 }
 

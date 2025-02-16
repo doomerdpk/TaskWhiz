@@ -20,13 +20,14 @@ button {
 }
 
 button:hover {
-  background-color: black;
+  background-color: #0077b6;
 }
 
 input {
   border: none;
   border-radius: 0.3rem;
   min-height: 4vh;
+  padding: 0.5rem;
 }
 
 /* Navbar Section */
@@ -45,6 +46,7 @@ input {
 
 #navbar-logo img {
   width: 3vw;
+  max-width: 100%;
   height: auto;
   object-fit: contain;
 }
@@ -91,7 +93,8 @@ input {
   flex-direction: column;
   flex-wrap: wrap;
   gap: 1vh;
-  max-height: 70vh;
+  max-height: calc(100vh - 150px);
+  padding: 1rem;
   overflow-y: auto;
 }
 

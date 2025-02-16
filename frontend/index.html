@@ -3,12 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TodoWhiz</title>
-    <link
-      rel="icon"
-      type="image/x-icon"
-      href="https://imgs.search.brave.com/tGDLZZrVz4Sx7O_FnAYQwy1p7iErg7bMG6xv_vFK0TI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pY29u/cy52ZXJ5aWNvbi5j/b20vcG5nL28vYnVz/aW5lc3MvdnNjb2Rl/LXByb2dyYW0taXRl/bS1pY29uL3RvZG8t/Mi5wbmc"
+    <meta
+      name="description"
+      content="TaskWhiz - A simple and effective task management tool."
     />
+
+    <title>TaskWhiz</title>
+    <link rel="icon" type="image/x-icon" href="./assets/logo.webp" />
     <link rel="stylesheet" href="styles.css" />
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   </head>
@@ -16,65 +17,64 @@
     <!-- Navbar Section -->
     <div id="navbar">
       <div id="navbar-logo">
-        <img
-          src="https://imgs.search.brave.com/tGDLZZrVz4Sx7O_FnAYQwy1p7iErg7bMG6xv_vFK0TI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pY29u/cy52ZXJ5aWNvbi5j/b20vcG5nL28vYnVz/aW5lc3MvdnNjb2Rl/LXByb2dyYW0taXRl/bS1pY29uL3RvZG8t/Mi5wbmc"
-          alt="logo"
-        />
+        <img src="./assets/logo.webp" alt="TaskWhiz Logo" />
         <h1>TaskWhiz</h1>
       </div>
 
       <div id="navbar-buttons">
-        <button id="signup" onclick="signupPage()">Signup</button>
-        <button id="signin" onclick="signinPage()">Login</button>
+        <button type="button" id="signup" onclick="signupPage()">Signup</button>
+        <button type="button" id="signin" onclick="signinPage()">Login</button>
       </div>
     </div>
 
-    <!-- Hero Section -->
-    <div id="hero-section">
-      <h1>TaskWhiz, Get it Done!</h1>
-      <p>One Stop solution to make everyday count.</p>
-    </div>
+    <main>
+      <!-- Hero Section -->
+      <section id="hero-section">
+        <h1>TaskWhiz, Get it Done!</h1>
+        <p>One Stop solution to make everyday count.</p>
+      </section>
 
-    <!-- Signup Section -->
-    <div id="signup-section">
-      <h1>Welcome to TaskWhiz</h1>
-      <p>Create an account to start listing todos!</p>
+      <!-- Signup Section -->
+      <section id="signup-section">
+        <h1>Welcome to TaskWhiz</h1>
+        <p>Create an account to start listing todos!</p>
 
-      <label for="username">Username</label>
-      <input id="signup-username" type="text" />
+        <label for="signup-username">Username</label>
+        <input id="signup-username" type="text" />
 
-      <label for="password">Password</label>
-      <input id="signup-password" type="password" />
+        <label for="signup-password">Password</label>
+        <input id="signup-password" type="password" autocomplete="off" />
 
-      <button onclick="signup()">Signup</button>
-    </div>
+        <button type="button" onclick="signup()">Signup</button>
+      </section>
 
-    <!-- Signin Section -->
-    <div id="signin-section">
-      <h1>Welcome to TaskWhiz</h1>
-      <p>Login to access your todos!</p>
+      <!-- Signin Section -->
+      <section id="signin-section">
+        <h1>Welcome to TaskWhiz</h1>
+        <p>Login to access your todos!</p>
 
-      <label for="username">Username</label>
-      <input id="signin-username" type="text" />
+        <label for="signin-username">Username</label>
+        <input id="signin-username" type="text" />
 
-      <label for="password">Password</label>
-      <input id="signin-password" type="password" />
+        <label for="signin-password">Password</label>
+        <input id="signin-password" type="password" autocomplete="off" />
 
-      <button onclick="signin()">Signin</button>
-    </div>
+        <button type="button" onclick="signin()">Signin</button>
+      </section>
 
-    <!-- Todos Section -->
-    <div id="todos-section">
-      <div id="todos-container"></div>
-      <div id="create-todo">
-        <label for="title">title</label>
-        <input id="title-create" type="text" />
-        <label for="id">id</label>
-        <input id="id-create" type="number" />
-        <button onclick="createTodo()">Create Todo</button>
-      </div>
-    </div>
+      <!-- Todos Section -->
+      <section id="todos-section">
+        <div id="todos-container"></div>
+        <div id="create-todo">
+          <label for="title-create">title</label>
+          <input id="title-create" type="text" />
+          <label for="id-create">id</label>
+          <input id="id-create" type="number" />
+          <button type="button" onclick="createTodo()">Create Todo</button>
+        </div>
+      </section>
+    </main>
 
-    <script src="main.js"></script>
+    <script src="main.js" defer></script>
   </body>
 </html>
