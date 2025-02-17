@@ -1,12 +1,22 @@
-const heroSection = document.getElementById("hero-section");
+const heroSection = document.getElementById("home-section");
 const signupSection = document.getElementById("signup-section");
 const signinSection = document.getElementById("signin-section");
-const signupButton = document.getElementById("signup");
-const signinButton = document.getElementById("signin");
-const navbarButtons = document.getElementById("navbar-buttons");
 const todosSection = document.getElementById("todos-section");
+const navbarButtons = document.getElementById("navbar-buttons");
 
-document.addEventListener("DOMContentLoaded", handleRoute);
+document.addEventListener("DOMContentLoaded", () => {
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    updateNavbarForLoggedInUser();
+    if (location.hash === "#todos") {
+      handleRoute();
+    }
+  } else {
+    handleRoute();
+  }
+});
+
 window.addEventListener("hashchange", handleRoute);
 
 async function handleRoute() {
@@ -27,34 +37,11 @@ async function handleRoute() {
   }
 
   if (page === "todos") {
-    try {
-      const response = await axios.get("http://localhost:3000/api/v1/todo/me", {
-        headers: {
-          Authorization: localStorage.getItem(token),
-        },
-      });
-      console.log("A");
-      signupButton.style.display = "none";
-      signinButton.style.display = "none";
-      console.log("B");
-      const welcomeMessage = document.createElement("h3");
-      welcomeMessage.innerHTML = "Welcome " + response.data.message;
-      const logoutBtn = document.createElement("button");
-      logoutBtn.innerHTML = "logOut";
-      logoutBtn.setAttribute("onclick", "logOut()");
-      document
-        .getElementById("navbar-buttons")
-        .append(welcomeMessage, logoutBtn);
-      console.log("C");
-      navigateTo("todos");
-      todosSection.style.display = "flex";
+    const savedTodos = JSON.parse(localStorage.getItem("todos"));
+    if (savedTodos) {
+      renderTodos(savedTodos);
+    } else {
       getTodos();
-    } catch (error) {
-      if (error.response && error.response.data.error) {
-        alert(error.response.data.error);
-      } else {
-        alert("An unexpected error occurred. Please try again.");
-      }
     }
   }
 }
@@ -63,12 +50,18 @@ function navigateTo(page) {
   location.hash = page;
 }
 
-function signupPage() {
-  signupSection.style.display = "flex";
-}
+function updateNavbarForLoggedInUser() {
+  navbarButtons.innerHTML = "";
 
-function signinPage() {
-  signinSection.style.display = "flex";
+  const username = localStorage.getItem("username") || "User";
+  const welcomeMessage = document.createElement("h3");
+  welcomeMessage.innerHTML = "Welcome " + username;
+
+  const logoutBtn = document.createElement("button");
+  logoutBtn.innerHTML = "Log Out";
+  logoutBtn.setAttribute("onclick", "logOut()");
+
+  navbarButtons.append(welcomeMessage, logoutBtn);
 }
 
 async function signup() {
@@ -82,11 +75,10 @@ async function signup() {
     );
     alert(response.data.message);
   } catch (error) {
-    if (error.response && error.response.data.error) {
-      alert(error.response.data.error);
-    } else {
-      alert("An unexpected error occurred. Please try again.");
-    }
+    alert(
+      error.response?.data?.error ||
+        "An unexpected error occurred. Please try again."
+    );
     return;
   }
 
@@ -104,36 +96,39 @@ async function signin() {
       { username, password }
     );
     localStorage.setItem("token", response.data.token);
+    localStorage.setItem("username", response.data.username);
 
-    signupButton.style.display = "none";
-    signinButton.style.display = "none";
-
-    const welcomeMessage = document.createElement("h3");
-    welcomeMessage.innerHTML = "Welcome " + response.data.username;
-    const logoutBtn = document.createElement("button");
-    logoutBtn.innerHTML = "logOut";
-    logoutBtn.setAttribute("onclick", "logOut()");
-    document.getElementById("navbar-buttons").append(welcomeMessage, logoutBtn);
-
+    updateNavbarForLoggedInUser();
     navigateTo("todos");
-    todosSection.style.display = "flex";
     getTodos();
   } catch (error) {
-    if (error.response && error.response.data.error) {
-      alert(error.response.data.error);
-    } else {
-      alert("An unexpected error occurred. Please try again.");
-    }
+    alert(
+      error.response?.data?.error ||
+        "An unexpected error occurred. Please try again."
+    );
   }
 }
 
 function logOut() {
   localStorage.removeItem("token");
+  localStorage.removeItem("username");
+  localStorage.removeItem("todos");
 
-  navbarButtons.innerHTML = `
-    <button type="button" onclick="navigateTo('signup')">Signup</button>
-    <button type="button" onclick="navigateTo('signin')">Login</button>
-  `;
+  navbarButtons.innerHTML = "";
+
+  const signupBtn = document.createElement("button");
+  signupBtn.id = "signup";
+  signupBtn.innerText = "Signup";
+  signupBtn.type = "button";
+  signupBtn.onclick = () => navigateTo("signup");
+
+  const signinBtn = document.createElement("button");
+  signinBtn.id = "signin";
+  signinBtn.innerText = "Login";
+  signinBtn.type = "button";
+  signinBtn.onclick = () => navigateTo("signin");
+
+  navbarButtons.append(signupBtn, signinBtn);
 
   navigateTo("home");
 }
@@ -149,25 +144,40 @@ async function getTodos() {
       }
     );
 
+    let todos;
     if (typeof response.data.message === "string") {
-      document.getElementById("todos-container").innerHTML =
-        response.data.message;
+      todos = response.data.message;
     } else {
-      document.getElementById("todos-container").innerHTML = "";
-      const todos = response.data.message.sort((a, b) => a.id - b.id);
-      for (let i = 0; i < todos.length; i++) {
-        const title = todos[i].title;
-        const id = todos[i].id;
-        let todo = `<div class="todo"><span>${id}. ${title}</span><div><button onclick="deleteTodo(${id})">Delete</button>  <button onclick="updateTodo(${id})">Update</button></div></div>`;
-        document.getElementById("todos-container").innerHTML += todo;
-      }
+      todos = response.data.message.sort((a, b) => a.id - b.id);
     }
+
+    localStorage.setItem("todos", JSON.stringify(todos));
+    renderTodos(todos);
   } catch (error) {
-    if (error.response && error.response.data.error) {
-      alert(error.response.data.error);
-    } else {
-      alert("An unexpected error occurred. Please try again.");
-    }
+    alert(
+      error.response?.data?.error ||
+        "An unexpected error occurred. Please try again."
+    );
+  }
+}
+
+function renderTodos(todos) {
+  const todosContainer = document.getElementById("todos-container");
+  todosContainer.innerHTML = "";
+
+  if (typeof todos === "string") {
+    todosContainer.innerHTML = todos;
+  } else {
+    todos.forEach(({ id, title }) => {
+      let todo = `<div class="todo">
+          <span>${id}. ${title}</span>
+          <div>
+            <button onclick="deleteTodo(${id})">Delete</button>
+            <button onclick="updateTodo(${id})">Update</button>
+          </div>
+        </div>`;
+      todosContainer.innerHTML += todo;
+    });
   }
 }
 
@@ -177,10 +187,7 @@ async function createTodo() {
     const id = document.getElementById("id-create").value;
     await axios.post(
       "http://localhost:3000/api/v1/todo/create-todo",
-      {
-        title,
-        id,
-      },
+      { title, id },
       {
         headers: {
           Authorization: localStorage.getItem("token"),
@@ -192,23 +199,21 @@ async function createTodo() {
     document.getElementById("title-create").value = "";
     document.getElementById("id-create").value = "";
   } catch (error) {
-    if (error.response && error.response.data.error) {
-      alert(error.response.data.error);
-    } else {
-      alert("An unexpected error occurred. Please try again.");
-    }
+    alert(
+      error.response?.data?.error ||
+        "An unexpected error occurred. Please try again."
+    );
   }
 }
 
 async function updateTodo(id) {
   try {
     let title = prompt("Enter the title to update the todo:");
+    if (!title || title.trim() === "") return;
 
     await axios.put(
-      "http://localhost:3000/api/v1/todo/update-todo/" + id,
-      {
-        title,
-      },
+      `http://localhost:3000/api/v1/todo/update-todo/${id}`,
+      { title },
       {
         headers: {
           Authorization: localStorage.getItem("token"),
@@ -217,27 +222,25 @@ async function updateTodo(id) {
     );
     getTodos();
   } catch (error) {
-    if (error.response && error.response.data.error) {
-      alert(error.response.data.error);
-    } else {
-      alert("An unexpected error occurred. Please try again.");
-    }
+    alert(
+      error.response?.data?.error ||
+        "An unexpected error occurred. Please try again."
+    );
   }
 }
 
 async function deleteTodo(id) {
   try {
-    await axios.delete("http://localhost:3000/api/v1/todo/delete-todo/" + id, {
+    await axios.delete(`http://localhost:3000/api/v1/todo/delete-todo/${id}`, {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
     });
     getTodos();
   } catch (error) {
-    if (error.response && error.response.data.error) {
-      alert(error.response.data.error);
-    } else {
-      alert("An unexpected error occurred. Please try again.");
-    }
+    alert(
+      error.response?.data?.error ||
+        "An unexpected error occurred. Please try again."
+    );
   }
 }
